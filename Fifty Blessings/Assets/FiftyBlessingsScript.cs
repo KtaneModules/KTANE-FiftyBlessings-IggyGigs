@@ -11,6 +11,7 @@ public class FiftyBlessingsScript : MonoBehaviour {
 
     public KMBombInfo Bomb;
     public KMAudio Audio;
+    public KMBombModule Module;
 
     static int ModuleIdCounter = 1;
     int ModuleId;
@@ -35,9 +36,9 @@ public class FiftyBlessingsScript : MonoBehaviour {
     };
 
     private float ringWindow = 0f;
-    private float ringTimer = 0f;
+    private float ringTimer = 60f;
     private bool rung = false;
-    float timer = -6f;
+    float timer;
 
     private int callRow = 0, callCol = 0, mazeKey = 0;
 
@@ -90,12 +91,14 @@ public class FiftyBlessingsScript : MonoBehaviour {
     int solution;
 
     void Awake() {
+
         ModuleId = ModuleIdCounter++;
         /*
         foreach (KMSelectable object in keypad) {
             object.OnInteract += delegate () { keypadPress(object); return false; };
         }
         */
+        Module.OnActivate += () => { Ring(); };
 
         buttons[0].OnInteract += delegate ()
         {
@@ -131,7 +134,8 @@ public class FiftyBlessingsScript : MonoBehaviour {
 
     }
 
-    void Start() {List<int> bpPool = new List<int> { 0, 1, 2, 3, 4, 5 };
+    void Start() {
+        List<int> bpPool = new List<int> { 0, 1, 2, 3, 4, 5 };
         for(int i = 0; i < 4; i++)
         {
             int rndIndex = Rnd.Range(0, bpPool.Count());
@@ -302,7 +306,6 @@ public class FiftyBlessingsScript : MonoBehaviour {
             {
                 Ring();
                 timer = 0;
-                ringTimer = 60f;
             }
         }
    }
