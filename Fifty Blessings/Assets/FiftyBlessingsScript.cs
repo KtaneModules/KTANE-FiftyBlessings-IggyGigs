@@ -310,10 +310,13 @@ public class FiftyBlessingsScript : MonoBehaviour {
         }
    }
     void Ring() {
-        Debug.LogFormat("[Fifty Blessing #{0}] Phone ring at {1}.", ModuleId, Bomb.GetFormattedTime());
-        ringWindow = 5f;
-        Audio.PlaySoundAtTransform(sounds[0], buttons[3].transform);
-        rung = true;
+        if (!ModuleSolved)
+        {
+            Debug.LogFormat("[Fifty Blessing #{0}] Phone ring at {1}.", ModuleId, Bomb.GetFormattedTime());
+            ringWindow = 5f;
+            Audio.PlaySoundAtTransform(sounds[0], buttons[3].transform);
+            rung = true;
+        }
     }
     void Pickup() {
 
