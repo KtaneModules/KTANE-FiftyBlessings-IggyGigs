@@ -102,19 +102,21 @@ public class FiftyBlessingsScript : MonoBehaviour {
 
         buttons[0].OnInteract += delegate ()
         {
-            Audio.PlaySoundAtTransform("next", buttons[0].transform);
             currentBlueprint--;
             if (currentBlueprint < 0)
-                currentBlueprint = 3;
+                currentBlueprint++;
+            else
+                Audio.PlaySoundAtTransform("next", buttons[0].transform);
             SetBlueprintDisplay();
             return false;
         };
         buttons[1].OnInteract += delegate ()
         {
-            Audio.PlaySoundAtTransform("next1", buttons[1].transform);
             currentBlueprint++;
             if (currentBlueprint > 3)
-                currentBlueprint = 0;
+                currentBlueprint--;
+            else
+                Audio.PlaySoundAtTransform("next1", buttons[1].transform);
             SetBlueprintDisplay();
             return false;
         };
