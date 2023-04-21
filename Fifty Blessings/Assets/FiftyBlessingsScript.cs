@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using KModkit;
 using UnityEngine;
+using KModkit;
 using Rnd = UnityEngine.Random;
 
 public class FiftyBlessingsScript : MonoBehaviour {
@@ -100,7 +100,8 @@ public class FiftyBlessingsScript : MonoBehaviour {
         */
         Module.OnActivate += () => { Ring(); };
 
-        buttons[0].OnInteract += delegate () {
+        buttons[0].OnInteract += delegate ()
+        {
             currentBlueprint--;
             if (currentBlueprint < 0)
                 currentBlueprint++;
@@ -109,7 +110,8 @@ public class FiftyBlessingsScript : MonoBehaviour {
             SetBlueprintDisplay();
             return false;
         };
-        buttons[1].OnInteract += delegate () {
+        buttons[1].OnInteract += delegate ()
+        {
             currentBlueprint++;
             if (currentBlueprint > 3)
                 currentBlueprint--;
@@ -121,26 +123,28 @@ public class FiftyBlessingsScript : MonoBehaviour {
         buttons[3].OnInteract += delegate () { Pickup(); return false; };
 
         buttons[2].OnInteract += delegate () {
-            if (currentBlueprint == solution) {
+            if (currentBlueprint == solution)
+            {
                 GetComponent<KMBombModule>().HandlePass();
                 ModuleSolved = true;
                 Audio.PlaySoundAtTransform("solve", buttons[2].transform);
             }
-            else if (!ModuleSolved)
+            else if(!ModuleSolved)
                 GetComponent<KMBombModule>().HandleStrike();
-            return false;
+            return false; 
         };
 
     }
 
     void Start() {
         List<int> bpPool = new List<int> { 0, 1, 2, 3, 4, 5 };
-        for (int i = 0; i < 4; i++) {
+        for(int i = 0; i < 4; i++)
+        {
             int rndIndex = Rnd.Range(0, bpPool.Count());
             usedBlueprints[i] = bpPool.ElementAt(rndIndex);
             bpPool.RemoveAt(rndIndex);
         }
-        Debug.LogFormat("[Fifty Blessings #{0}] Used blueprint displays are: {1}, {2}, {3}, {4}", ModuleId, usedBlueprints[0] + 1, usedBlueprints[1] + 1, usedBlueprints[2] + 1, usedBlueprints[3] + 1);
+        Debug.LogFormat("[Fifty Blessings #{0}] Used blueprint displays are: {1}, {2}, {3}, {4}", ModuleId, usedBlueprints[0]+1, usedBlueprints[1]+1, usedBlueprints[2]+1, usedBlueprints[3]+1);
         SetBlueprintDisplay();
 
         callOrder = Rnd.Range(0, 2);
@@ -180,7 +184,8 @@ public class FiftyBlessingsScript : MonoBehaviour {
         callRow = Rnd.Range(0, callsRow.Length);
         callCol = Rnd.Range(0, callsCol.Length);
         Debug.LogFormat("[Fifty Blessings #{0}] Expect a call from {1} and {2}.", ModuleId, callsCol[callCol], callsRow[callRow]);
-        if (SerialDigits.Count() > 0) {
+        if (SerialDigits.Count() > 0)
+        {
             mazeKey = (callTable[callCol, callRow] + SerialDigits.ElementAt(0) - SerialDigits.ElementAt(SerialDigits.Count() - 1)) % 4; //if negative, mod4 will do nothing
             while (mazeKey < 0)
                 mazeKey = 4 + mazeKey;
@@ -225,7 +230,8 @@ public class FiftyBlessingsScript : MonoBehaviour {
         string[] usedPath;
         int[,] usedColorMaze;
 
-        switch (mazeKey) {
+        switch (mazeKey)
+        {
             case 1:
                 usedPathMaze = pathsA;
                 usedColorMaze = mazeA;
@@ -251,11 +257,15 @@ public class FiftyBlessingsScript : MonoBehaviour {
         else
             colorMatch = false;
 
-        for (int i = 0; i < usedPathMaze.Length; i++) {
-            for (int j = 0; j < usedPathMaze[i].Length; j++) {
-                if (usedPathMaze[i][j].Equals(firstCoordinate)) {
+        for(int i = 0; i < usedPathMaze.Length; i++)
+        {
+            for (int j = 0; j < usedPathMaze[i].Length; j++)
+            {
+                if (usedPathMaze[i][j].Equals(firstCoordinate))
+                {
                     usedPath = usedPathMaze[i];
-                    if (usedPath.Contains(secondCoordinate)) {
+                    if (usedPath.Contains(secondCoordinate))
+                    {
                         pathAvailable = true; //put it in here so i don't have to instantiate usedPath at the top
                         j = usedPathMaze[i].Length - 1; //flag
                         i = usedPathMaze.Length - 1; //flag
@@ -266,37 +276,44 @@ public class FiftyBlessingsScript : MonoBehaviour {
         Debug.LogFormat("[Fifty Blessings #{0}] Color match: {1}", ModuleId, colorMatch);
         Debug.LogFormat("[Fifty Blessings #{0}] Path from A to B: {1}", ModuleId, pathAvailable);
 
-        if (pathAvailable) {
+        if (pathAvailable)
+        {
             if (colorMatch)
                 solution = 0;
             else
                 solution = 2;
         }
-        else {
+        else
+        {
             if (colorMatch)
                 solution = 1;
             else
                 solution = 3;
         }
-        Debug.LogFormat("[Fifty Blessings #{0}] Correct blueprint is {1}.", ModuleId, solution + 1);
+        Debug.LogFormat("[Fifty Blessings #{0}] Correct blueprint is {1}.", ModuleId, solution+1);
     }
 
-    void Update() {
+   void Update () {
         timer += Time.deltaTime;
-        if (rung) {
-            if (timer > ringWindow) {
+        if(rung)
+        {
+            if (timer > ringWindow)
+            {
                 rung = false;
             }
         }
-        else {
-            if (timer > ringTimer) {
+        else
+        {
+            if(timer > ringTimer)
+            {
                 Ring();
                 timer = 0;
             }
         }
-    }
+   }
     void Ring() {
-        if (!ModuleSolved) {
+        if (!ModuleSolved)
+        {
             Debug.LogFormat("[Fifty Blessing #{0}] Phone ring at {1}.", ModuleId, Bomb.GetFormattedTime());
             ringWindow = 5f;
             Audio.PlaySoundAtTransform(sounds[0], buttons[3].transform);
@@ -306,67 +323,43 @@ public class FiftyBlessingsScript : MonoBehaviour {
     void Pickup() {
 
         buttons[3].AddInteractionPunch();
-        if (!ModuleSolved) {
-            if (!rung) {
+        if (!ModuleSolved)
+        {
+            if (!rung)
+            {
                 return;
             }
-            else {
+            else
+            {
                 rung = false;
-                if (callOrder == 0) {
+                if (callOrder == 0)
+                {
                     callOrder = 1;
                     Audio.PlaySoundAtTransform(callsRow[callRow], buttons[3].transform);
                 }
-                else {
+                else
+                {
                     callOrder = 0;
                     Audio.PlaySoundAtTransform(callsCol[callCol], buttons[3].transform);
                 }
             }
         }
     }
-    void SetBlueprintDisplay() {
+    void SetBlueprintDisplay()
+    {
         display.material = allBlueprints.ElementAt(usedBlueprints[currentBlueprint]);
-        Debug.LogFormat("[Fifty Blessing #{0}] Currently on blueprint {1}.", ModuleId, currentBlueprint + 1);
+        Debug.LogFormat("[Fifty Blessing #{0}] Currently on blueprint {1}.", ModuleId, currentBlueprint+1);
     }
 
-#pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Use '!{0} pickup' to pick up the phone on the next ring | "
-                                                  + "'!{0} <number>' to submit a blueprint.";
-#pragma warning restore 414
+//#pragma warning disable 414
+//   private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
+//#pragma warning restore 414
 
-    private string[] _validCommands = new string[] { "PICKUP", "1", "2", "3", "4" };
+//   IEnumerator ProcessTwitchCommand (string Command) {
+//      yield return null;
+//   }
 
-    private IEnumerator ProcessTwitchCommand(string command) {
-        command = command.Trim().ToUpper();
-
-        if (!_validCommands.Contains(command)) {
-            yield return "sendtochaterror Invalid command!";
-        }
-        yield return null;
-
-        if (command == "PICKUP") {
-            while (!rung) {
-                yield return "trycancel";
-            }
-            buttons[3].OnInteract();
-        }
-        else {
-            int submitPosition = int.Parse(command) - 1;
-
-            while (currentBlueprint != submitPosition) {
-                if (currentBlueprint > submitPosition) {
-                    buttons[0].OnInteract();
-                }
-                else {
-                    buttons[1].OnInteract();
-                }
-                yield return new WaitForSeconds(0.2f);
-            }
-
-            buttons[2].OnInteract();
-        }
-    }
-
-    private IEnumerator TwitchHandleForcedSolve() {
-        return ProcessTwitchCommand((solution + 1).ToString());
-    }
+//   IEnumerator TwitchHandleForcedSolve () {
+//      yield return null;
+//   }
 }
