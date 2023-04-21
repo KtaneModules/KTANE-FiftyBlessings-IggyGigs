@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEngine;
 using KModkit;
+using UnityEngine;
 using Rnd = UnityEngine.Random;
 
 public class FiftyBlessingsScript : MonoBehaviour {
@@ -351,15 +351,45 @@ public class FiftyBlessingsScript : MonoBehaviour {
         Debug.LogFormat("[Fifty Blessing #{0}] Currently on blueprint {1}.", ModuleId, currentBlueprint+1);
     }
 
-//#pragma warning disable 414
-//   private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
-//#pragma warning restore 414
+#pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"Use '!{0} pickup' to pick up the phone on the next ring | "
+                                                  + "'!{0} <number>' to submit a blueprint.";
+#pragma warning restore 414
 
-//   IEnumerator ProcessTwitchCommand (string Command) {
-//      yield return null;
-//   }
+    private string[] _validCommands = new string[] { "PICKUP", "1", "2", "3", "4" };
 
-//   IEnumerator TwitchHandleForcedSolve () {
-//      yield return null;
-//   }
+    private IEnumerator ProcessTwitchCommand(string command) {
+        command = command.Trim().ToUpper();
+
+        if (!_validCommands.Contains(command)) {
+            yield return "sendtochaterror Invalid command!";
+        }
+        yield return null;
+
+        if (command == "PICKUP") {
+            while (!rung) {
+                yield return "trycancel";
+            }
+            buttons[3].OnInteract();
+        }
+        else {
+            int submitPosition = int.Parse(command) - 1;
+
+            while (currentBlueprint != submitPosition) {
+                if (currentBlueprint > submitPosition) {
+                    buttons[0].OnInteract();
+                }
+                else {
+                    buttons[1].OnInteract();
+                }
+                yield return new WaitForSeconds(0.2f);
+            }
+
+            buttons[2].OnInteract();
+        }
+    }
+
+    private IEnumerator TwitchHandleForcedSolve() {
+        return ProcessTwitchCommand((solution + 1).ToString());
+    }
 }
